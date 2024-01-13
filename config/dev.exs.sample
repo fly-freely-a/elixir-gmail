@@ -1,9 +1,6 @@
 use Mix.Config
 
-config :gmail, :oauth2, [
-  client_id: "CLIENT_ID",
-  client_secret: "CLIENT_SECRET"
-]
+config :gmail, :oauth2, %{"user_id" => %{client_id: "CLIENT_ID", client_secret: "CLIENT_SECRET"}}
 
 config :gmail, :thread,
   pool_size: 100

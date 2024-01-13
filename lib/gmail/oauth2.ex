@@ -29,9 +29,9 @@ defmodule Gmail.OAuth2 do
     :os.system_time(:seconds) >= expires_at
   end
 
-  @spec refresh_access_token(String.t) :: {String.t, number}
-  def refresh_access_token(refresh_token) when is_binary(refresh_token) do
-    {:ok, access_token, expires_at} = do_refresh_access_token(refresh_token)
+  @spec refresh_access_token(String.t, String.t) :: {String.t(), number}
+  def refresh_access_token(user_id, refresh_token) when is_binary(user_id) and is_binary(refresh_token) do
+    {:ok, access_token, expires_at} = do_refresh_access_token(user_id, refresh_token)
     {access_token, expires_at}
   end
 
@@ -40,14 +40,12 @@ defmodule Gmail.OAuth2 do
   #  Private functions {{{ #
 
   @typep refresh_access_token_response :: {atom, map} | {atom, String.t, number}
-  @spec do_refresh_access_token(String.t) :: refresh_access_token_response
-  @spec do_refresh_access_token(list, String.t) :: refresh_access_token_response
+  @spec do_refresh_access_token(String.t, String.t) :: refresh_access_token_response
+  @spec do_refresh_access_token(map, String.t) :: refresh_access_token_response
 
-  defp do_refresh_access_token(refresh_token) when is_binary(refresh_token) do
-    :oauth2
-    |> Utils.load_config
-    |> Enum.into(%{})
-    |> do_refresh_access_token(refresh_token)
+  defp do_refresh_access_token(user_id, refresh_token) when is_binary(user_id) and is_binary(refresh_token) do
+    config = Utils.load_config(:oauth2)
+    do_refresh_access_token(config[user_id], refresh_token)
   end
 
   defp do_refresh_access_token(%{client_id: client_id, client_secret: client_secret}, refresh_token) when is_binary(refresh_token) do
